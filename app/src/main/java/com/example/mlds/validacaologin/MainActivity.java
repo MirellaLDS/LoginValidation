@@ -7,6 +7,10 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.example.mlds.validacaologin.dao.LoginDAO;
+import com.example.mlds.validacaologin.datamodel.DataModel;
+import com.example.mlds.validacaologin.model.Login;
+
 public class MainActivity extends Activity implements View.OnClickListener {
 
     EditText editLogin;
@@ -40,6 +44,10 @@ public class MainActivity extends Activity implements View.OnClickListener {
 //                }
 //            }
 //        });
+
+        Toast.makeText(getApplication(),
+                "Query "+ DataModel.criarTabelaLogin(),
+                Toast.LENGTH_LONG).show();
     }
 
     boolean CamposValidados;
@@ -56,9 +64,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
                     CamposValidados = false;
                 } else {
                     Toast.makeText(getApplication(), "Senha bem vindo! " + editLogin.getText().toString() + "!", Toast.LENGTH_LONG).show();
-                    CamposValidados = false;
-                    editLogin.setText("");
-                    editSenha.setText("");
+                    CamposValidados = true;
                 }
 
                 if(CamposValidados){
@@ -66,9 +72,26 @@ public class MainActivity extends Activity implements View.OnClickListener {
                 }else{
                     Toast.makeText(getApplication(), "Dados Inválidos", Toast.LENGTH_LONG).show();
                 }
+
                 break;
             case (R.id.btnSalvar):
                 ///Regra de negocio btnSalvar
+                Login login = new Login();
+                login.setLogin(editLogin.getText().toString());
+                login.setSenha((editSenha.getText().toString()));
+
+                LoginDAO dao = new LoginDAO(getApplicationContext());
+
+                if(dao.adicionar(login)){
+                    Toast.makeText(getApplication(),
+                            "Dados adicionado com Sucesso ao Banco de Dados!",
+                            Toast.LENGTH_LONG).show();
+                }else{
+                    Toast.makeText(getApplication(),
+                            "Erro ao gravar os dados no Banco de Dados!",
+                            Toast.LENGTH_LONG).show();
+                }
+
                 break;
         }
     }
